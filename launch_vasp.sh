@@ -9,6 +9,12 @@
 #2012-06: Now runs multi-host over MPI for NWCHEM
 #2012-06-18: Extended to restart NWCHEM jobs. Also, I actually learnt how to use 'getopts' as part of this.
 
+#2013-11-14: Very initial VASP / Archer version - lots still hardcoded. Wraps
+#up 4x input files into the shell via redirects. Assumed I'd have to do this to
+#run in the temporary file space, but Archer seems to default to dropping you
+#directly into your work folder (where the job is submitted from) so not
+#necessary. How do TMP files work here? Mmm.
+
 # RUN AS ./executable.sh OTHERWISE OPTIONS WILL NOT BE GATHERED!
 
 #Get Options
