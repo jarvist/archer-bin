@@ -14,10 +14,34 @@
 #run in the temporary file space, but Archer seems to default to dropping you
 #directly into your work folder (where the job is submitted from) so not
 #necessary. How do TMP files work here? Mmm.
+# Aha hah - ARCHER doesn't have any tmp directory, as the compute nodes have no disks...
 
 # RUN AS ./executable.sh OTHERWISE OPTIONS WILL NOT BE GATHERED!
 
 #Get Options
+
+#Generalising this script to different machines for generality.
+
+HOST=` hostname `
+# wmd-master --> NEON
+# aquila-0   --> AQUILA
+# eslogin004 --> ARCHER
+
+case "${HOST}" in
+	wmd-master ) 
+		echo "Hello Neon!"
+		BUNDLE=0
+		ACCOUNT= ;;
+	aquila* )
+		echo "Hello Aquila!"
+		BUNDLE=0
+		ACCOUNT= ;;
+	eslogin* )
+		echo "Hello Archer!"	
+		ACCOUNT=e05-gener-wal ;;
+	*)
+		echo "I don't think we've met ${hostname}. Might be problems!"
+esac
 
 NCPUS=24
 MEM=11800mb   #Simon Burbidge correction - lots of nodes with 12GB physical memory, leaves no overhead for OS
@@ -25,6 +49,7 @@ QUEUE="" #default route
 TIME="23:58:02" # Two minutes to midnight :^)
 HOSTS=1 #Ah, the Host!
 RESTART="NAH"
+BUNDLE=0 # Wrap up VASP INPUT files into Shell script? Doesn't work on small buffer qsub / msubs!
 
 function USAGE()
 {
@@ -32,10 +57,6 @@ function USAGE()
 Jarv's VASP file runner.
 
 USAGE: ./launch_vasp.sh [-nmqtsl] VASP_DIRECTORIES(S)
-
-Suggested memory command for nwchem:
-    memory stack 300 mb heap 300 mb global 600 mb
-    Nb: Memory is (global seperate from stack and heap) cummulative, and per MPI process
 
 OPTIONS:
 	-n number of cpus
@@ -46,17 +67,11 @@ OPTIONS:
     -s short queue (-n 1 -m 1899mb -t 0:59:59)
     -l long  queue (-n 1 -m 1899mb -t 21:58:00)
 
-    -r restart (copies run files, adds restart line to NWCHEM input deck)
-
 DEFAULTS (+ inspect for formatting):
 	NCPUS = ${NCPUS}
 	MEM   = ${MEM}
 	QUEUE = ${QUEUE}
 	TIME = ${TIME}
-
-The defaults above will require something like the following in your COM files:
-    %mem=8GB
-    %nprocshared=8
 EOF
 }
 
@@ -94,6 +109,8 @@ Well, here's what I understood / defaulted to:
     QUEUE   =  ${QUEUE}
     TIME    =  ${TIME}
     RESTART =  ${RESTART}
+    BUNDLE  =  ${BUNDLE}
+    ACCOUNT =  ${ACCOUNT}
 EOF
 
 
@@ -118,10 +135,11 @@ do
 #PBS -l walltime=${TIME}
 #PBS -l select=${HOSTS} 
 #:ncpus=${NCPUS}:mem=${MEM}
-#PBS -A e05-gener-wal
+#PBS -A ${ACCOUNT}
 
 export OMP_NUM_THREADS=1
 ulimit -s unlimited
+
 module load vasp5/5.3.3
 
 export PBS_O_WORKDIR=\$(readlink -f \$PBS_O_WORKDIR)
@@ -130,13 +148,17 @@ cd "\${PBS_O_WORKDIR}" #Escaped to be interpreted by the subshell running job
 
 EOF
 
-for VASPFIL in INCAR POSCAR KPOINTS POTCAR
-do
- echo >> ${JOBFIL}
- echo "cat > ${VASPFIL} << EOFd16cfc822b4325e67e7a0695518f0242" >> ${JOBFIL} #Random md5sum to assure (statistically!) likely uniqueness in long files
- cat ${VASPFIL} >> ${JOBFIL}
- echo "EOFd16cfc822b4325e67e7a0695518f0242" >> ${JOBFIL}
-done 
+if (( BUNDLE ))
+then
+
+ for VASPFIL in INCAR POSCAR KPOINTS POTCAR
+ do
+  echo >> ${JOBFIL}
+  echo "cat > ${VASPFIL} << EOFd16cfc822b4325e67e7a0695518f0242" >> ${JOBFIL} #Random md5sum to assure (statistically!) likely uniqueness in long files
+  cat ${VASPFIL} >> ${JOBFIL}
+  echo "EOFd16cfc822b4325e67e7a0695518f0242" >> ${JOBFIL}
+ done 
+fi
 
 #OK, RUN AND CLEANUP TIME
 
