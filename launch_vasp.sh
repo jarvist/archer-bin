@@ -40,7 +40,7 @@ case "${HOST}" in
 		echo "Hello Archer!"	
 		ACCOUNT=e05-gener-wal ;;
 	*)
-		echo "I don't think we've met ${hostname}. Might be problems!"
+		echo "I don't think we've met ${HOST}. Might be problems!"
 esac
 
 NCPUS=24
