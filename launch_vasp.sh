@@ -148,6 +148,8 @@ cd "\${PBS_O_WORKDIR}" #Escaped to be interpreted by the subshell running job
 
 EOF
 
+#Inline input files (for machines where storage is a pain to fine).
+#HOWEVER, won't work with machines running a short-buffer QSUB + big Pseudo-potential files
 if (( BUNDLE ))
 then
 
@@ -167,7 +169,8 @@ cat  >> ${JOBFIL} << EOF
 
 # THUNDERBIRDS ARE GO!
 
-aprun -n '$NCPUS' vasp5 > vasp.out
+# Temporarily Aron's compilation; until Archer sort out permissions for module.
+aprun -n '$NCPUS' /home/e05/e05/aron/bin/vasp5 > vasp.out
 
 #VASP vomits files everywhere, so lets bundle them up into a folder
 #mkdir "${JOBFIL%.*}_out"
@@ -178,8 +181,8 @@ echo "For us, there is only the trying. The rest is not our business. ~T.S.Eliot
 
 EOF
 
- echo "CAPTURED QSUB COMMAND: "
- cat ${JOBFIL}
-# qsub -q "${QUEUE}" ${COM%.*}.sh
+# echo "CAPTURED QSUB COMMAND: "
+# cat ${JOBFIL}
+ qsub -q "${QUEUE}" ${JOBFIL} 
  cd -
 done
