@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#Usage: ./launch_vasp.sh [Directories with vasp files]
+# i.e. ./launch_vasp.sh ./   to submit job from PWD
+
+#Change log
 #Automagic .com CX1 (Imperial College London HPC) job submitter. A WIP. 
 #JMF 2007-09
 #Bash is a stranger in an open car...
@@ -46,7 +50,7 @@ case "${HOST}" in
 		ACCOUNT= ;;
 	eslogin* )
 		echo "Hello Archer! <(_ _)>"
-        CPUSPERHOST = 24 #2x12 core per host on Archer
+        CPUSPERHOST=24 #2x12 core per host on Archer
 		ACCOUNT=e05-gener-wal ;;
 	*)
 		echo "I don't think we've met ${HOST}. Might be problems! (>_<)>"
@@ -66,7 +70,7 @@ OPTIONS:
     -a account
 	-t time
     -h hosts
-    -c cpusperhost
+    -c cpusperhost 
 
     -s short single queue (-n 1 -m 1899mb -t 0:59:59)
     -l long  single queue (-n 1 -m 1899mb -t 21:58:00)
@@ -142,7 +146,8 @@ do
  cat  > ${JOBFIL} << EOF
 #!/bin/bash --login
 #PBS -l walltime=${TIME}
-#PBS -l select=${HOSTS}:ncpus=${NCPUS}:mem=${MEM}
+#PBS -l select=${HOSTS}
+# Not really necessary on Archer...:ncpus=${NCPUS}:mem=${MEM}
 #PBS -A ${ACCOUNT}
 
 export OMP_NUM_THREADS=1
