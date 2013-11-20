@@ -20,6 +20,21 @@ export PATH
 #Kick vim to give full colour, please
 export TERM=xterm-256color
 
+#Alias the Jester
+# From Aron...
+alias q='qstat -u ${USER}'
+alias qa='qstat -a'
+alias wq='watch qstat -u ${USER}'
+alias s='showq'
+alias d='diagnose -f'
+alias v='vim'
+# VASP mussers
+alias t='tail OUTCAR'
+alias to='tail OSZICAR'
+alias pressure='grep pressure OUTCAR'
+
+
+#Two-line command prompt with host, user & PWD. Titlebar not used anymore?
 PS1="${TITLEBAR}${bold}[\t]\u@[ARCHER]\h:\w/ \n> ${normal}"
 
 echo
