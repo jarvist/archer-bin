@@ -33,6 +33,8 @@ alias t='tail OUTCAR'
 alias to='tail OSZICAR'
 alias pressure='grep pressure OUTCAR'
 
+# Everyone loves the cookie monster...
+alias monster='qstat -u "${USER}" | awk "BEGIN{eat=0;want=0;}{if(\$10~"R"){eat=eat+\$7}else{want=want+\$7}}END{print \"Me eat \",eat,\" cookies! Me want \",want,\" cookies!\"}" '
 
 #Two-line command prompt with host, user & PWD. Titlebar not used anymore?
 PS1="${TITLEBAR}${bold}[\t]\u@[ARCHER]\h:\w/ \n> ${normal}"
