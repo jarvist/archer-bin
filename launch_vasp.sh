@@ -18,30 +18,7 @@
 
 # RUN AS ./executable.sh OTHERWISE OPTIONS WILL NOT BE GATHERED!
 
-#Get Options
-
-#Generalising this script to different machines for generality.
-
-HOST=` hostname `
-# wmd-master --> NEON
-# aquila-0   --> AQUILA
-# eslogin004 --> ARCHER
-
-case "${HOST}" in
-	wmd-master ) 
-		echo "Hello Neon!"
-		BUNDLE=0
-		ACCOUNT= ;;
-	aquila* )
-		echo "Hello Aquila!"
-		BUNDLE=0
-		ACCOUNT= ;;
-	eslogin* )
-		echo "Hello Archer!"	
-		ACCOUNT=e05-gener-wal ;;
-	*)
-		echo "I don't think we've met ${HOST}. Might be problems!"
-esac
+#Default Options
 
 NCPUS=24
 MEM=11800mb   #Simon Burbidge correction - lots of nodes with 12GB physical memory, leaves no overhead for OS
@@ -51,6 +28,30 @@ HOSTS=1 #Ah, the Host!
 RESTART="NAH"
 BUNDLE=0 # Wrap up VASP INPUT files into Shell script? Doesn't work on small buffer qsub / msubs!
 
+#Switch based on login hostname & fill in defaults for different machines
+
+HOST=` hostname `
+# wmd-master --> NEON
+# aquila-0   --> AQUILA
+# eslogin004 --> ARCHER
+
+case "${HOST}" in
+	wmd-master ) 
+		echo "Hello Neon! <(_ _)>"
+		BUNDLE=0
+		ACCOUNT= ;;
+	aquila* )
+		echo "Hello Aquila! <(_ _)>"
+		BUNDLE=0
+		ACCOUNT= ;;
+	eslogin* )
+		echo "Hello Archer! <(_ _)>"
+        CPUSPERHOST = 24 #2x12 core per host on Archer
+		ACCOUNT=e05-gener-wal ;;
+	*)
+		echo "I don't think we've met ${HOST}. Might be problems! (>_<)>"
+esac
+
 function USAGE()
 {
  cat << EOF
@@ -59,13 +60,16 @@ Jarv's VASP file runner.
 USAGE: ./launch_vasp.sh [-nmqtsl] VASP_DIRECTORIES(S)
 
 OPTIONS:
-	-n number of cpus
+	-n number of cpus (Deprecated! Will be overwritten by HOSTS*CPUSPERHOST)
 	-m amount of memory
 	-q queue
+    -a account
 	-t time
     -h hosts
-    -s short queue (-n 1 -m 1899mb -t 0:59:59)
-    -l long  queue (-n 1 -m 1899mb -t 21:58:00)
+    -c cpusperhost
+
+    -s short single queue (-n 1 -m 1899mb -t 0:59:59)
+    -l long  single queue (-n 1 -m 1899mb -t 21:58:00)
 
 DEFAULTS (+ inspect for formatting):
 	NCPUS = ${NCPUS}
@@ -84,6 +88,8 @@ do
 	    q    )  QUEUE=$OPTARG;;
 	    t    )  TIME="${OPTARG}";;
         h    )  HOSTS="${OPTARG}";;
+        c    )  CPUSPERHOST="${OPTARG}";;
+        a    )  ACCOUNT="${OPTARG}";;
 #FLAGS
         s    )  NCPUS=1
                 TIME="0:59:59"
@@ -99,6 +105,9 @@ do
                 USAGE   # DEFAULT
     esac
 done
+
+#Next line important! Auto calculation of NCPUS...
+NCPUS=$(($HOSTS*$CPUSPERHOST))
 
 #OK, now we should have our options
 cat <<EOF
@@ -133,8 +142,7 @@ do
  cat  > ${JOBFIL} << EOF
 #!/bin/bash --login
 #PBS -l walltime=${TIME}
-#PBS -l select=${HOSTS} 
-#:ncpus=${NCPUS}:mem=${MEM}
+#PBS -l select=${HOSTS}:ncpus=${NCPUS}:mem=${MEM}
 #PBS -A ${ACCOUNT}
 
 export OMP_NUM_THREADS=1
@@ -177,6 +185,7 @@ aprun -n '$NCPUS' /home/e05/e05/aron/bin/vasp5 > vasp.out
 #mv *.* "${JOBFIL%.*}_out"
 #cp -a "${JOBFIL%.*}_out" ${PWD}/${WD}/ 
 
+#AND finish on a quote - this will be copied to the PBS stdout .o?????
 echo "For us, there is only the trying. The rest is not our business. ~T.S.Eliot"
 
 EOF
