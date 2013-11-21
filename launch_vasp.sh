@@ -65,15 +65,17 @@ USAGE: ./launch_vasp.sh [-nmqtsl] VASP_DIRECTORIES(S)
 
 OPTIONS:
 	-n number of cpus (Deprecated! Will be overwritten by HOSTS*CPUSPERHOST)
-	-m amount of memory
+	-m amount of memory (Not presently used...)
+
 	-q queue
     -a account
 	-t time
     -h hosts
-    -c cpusperhost 
+    -c cpusperhost (Nb: overwrite with lower value to underutilise CPUs + enjoy higher MEM/cpu.)
 
-    -s short single queue (-n 1 -m 1899mb -t 0:59:59)
-    -l long  single queue (-n 1 -m 1899mb -t 21:58:00)
+Magics for Imperial College London HPC CX1 Cluster:
+    -s short single-processor queue (-n 1 -m 1899mb -t 0:59:59)
+    -l long  single-processor queue (-n 1 -m 1899mb -t 21:58:00)
 
 DEFAULTS (+ inspect for formatting):
 	NCPUS = ${NCPUS}
