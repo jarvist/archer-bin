@@ -1,8 +1,18 @@
 #!/bin/sh
 
+# From http://craig-russell.co.uk/2013/01/24/shell-barcharts.html
+function dist(){
+  sort |  uniq -c | sort -n | awk '{ b=""; for(i=0;i<$1;i++){ b=b"#"}; v=$1; $1=""; print $0,"\t",b,v }'
+}
+
+
 echo "All jobs requested..."
 qstat -f | grep Resource_List.ncpus | cut -f2 -d\= | sort -n | uniq -c
 
 echo "Jobs presently running, breakdown by number of CPUs"
 qstat -f | grep resources_used.ncpus | cut -f2 -d\=  | sort -n | uniq -c
+
+echo "Jobs presently running; histogram!"
+qstat -f | grep resources_used.ncpus | cut -f2 -d\=  | dist 
+
 
