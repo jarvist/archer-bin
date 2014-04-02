@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "All jobs requested..."
+qstat -f | grep Resource_List.ncpus | cut -f2 -d\= | sort -n | uniq -c
+
+echo "Jobs presently running, breakdown by number of CPUs"
+qstat -f | grep resources_used.ncpus | cut -f2 -d\=  | sort -n | uniq -c
+
