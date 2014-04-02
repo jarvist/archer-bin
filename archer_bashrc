@@ -41,6 +41,15 @@ alias stalk='qstat -u keeeto && qstat -u aron' #Stalkity stalk stalk
 #Two-line command prompt with host, user & PWD. Titlebar not used anymore?
 PS1="${TITLEBAR}${bold}[\t]\u@[ARCHER]\h:\w/ \n> ${normal}"
 
+if [ "${USER}" == "pr1ujarv" ]; then
+cat << EOF
+    |\__/|  
+   /     \  
+  /_.~ ~,_\    Ultra, Ultra, UltraFox!
+     \@/
+EOF
+fi
+
 echo
 echo "  GREETINGS PROFESSOR FALKEN.  SHALL WE PLAY A GAME?"
 echo
