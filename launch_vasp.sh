@@ -31,6 +31,8 @@ TIME="23:58:02" # Two minutes to midnight :^)
 HOSTS=1 #Ah, the Host!
 RESTART="NAH"
 BUNDLE=0 # Wrap up VASP INPUT files into Shell script? Doesn't work on small buffer qsub / msubs!
+GAMMA=0 # GAMMA only VASP? 50% faster, woo.
+SUBMIT=0
 
 #Switch based on login hostname & fill in defaults for different machines
 
@@ -51,7 +53,12 @@ case "${HOST}" in
 	eslogin* )
 		echo "Hello Archer! <(_ _)>"
         CPUSPERHOST=24 #2x12 core per host on Archer
-		ACCOUNT=e05-gener-wal ;;
+		if (( "${USER}"="jarvist" ))
+		then
+			ACCOUNT=e05-gener-wal 
+		else
+			ACCOUNT=pr1u1109 
+		fi ;;
 	*)
 		echo "I don't think we've met ${HOST}. Might be problems! (>_<)>"
 esac
@@ -68,14 +75,11 @@ OPTIONS:
 	-m amount of memory (Not presently used...)
 
 	-q queue
-    -a account
+        -a account
 	-t time
-    -h hosts
-    -c cpusperhost (Nb: overwrite with lower value to underutilise CPUs + enjoy higher MEM/cpu.)
-
-Magics for Imperial College London HPC CX1 Cluster:
-    -s short single-processor queue (-n 1 -m 1899mb -t 0:59:59)
-    -l long  single-processor queue (-n 1 -m 1899mb -t 21:58:00)
+        -h hosts
+	-s submit
+        -c cpusperhost (Nb: overwrite with lower value to underutilise CPUs + enjoy higher MEM/cpu.)
 
 DEFAULTS (+ inspect for formatting):
 	NCPUS = ${NCPUS}
@@ -85,7 +89,7 @@ DEFAULTS (+ inspect for formatting):
 EOF
 }
 
-while getopts ":n:m:q:t:h:slr?" Option
+while getopts ":n:m:q:t:h:c:a:srg?" Option
 do
     case $Option in
 #OPTIONS
@@ -97,13 +101,9 @@ do
         c    )  CPUSPERHOST="${OPTARG}";;
         a    )  ACCOUNT="${OPTARG}";;
 #FLAGS
-        s    )  NCPUS=1
-                TIME="0:59:59"
-                MEM="1899mb";;
-        l    )  NCPUS=1
-                TIME="21:58:00"
-                MEM="1899mb";;
+        s    )  SUBMIT=1;; 
         r    )  RESTART="YEAH";;
+	g    )  GAMMA=1;;
         ?    )  USAGE
                 exit 0;;
         *    )  echo ""
@@ -177,6 +177,14 @@ then
  done 
 fi
 
+# Local copies as currently I'm stupidly added to group=vasp rather than required group=vasp5!
+if (( GAMMA ))
+then
+ VASP=~/bin/vasp5.gamma
+else
+ VASP=~/bin/vasp5
+fi
+
 #OK, RUN AND CLEANUP TIME
 
 cat  >> ${JOBFIL} << EOF
@@ -185,7 +193,7 @@ cat  >> ${JOBFIL} << EOF
 # THUNDERBIRDS ARE GO!
 
 # Temporarily Aron's compilation; until Archer sort out permissions for module.
-aprun -n '$NCPUS' /home/e05/e05/aron/bin/vasp5 > vasp.out
+aprun -n '$NCPUS' $VASP > vasp.out
 
 #VASP vomits files everywhere, so lets bundle them up into a folder
 #mkdir "${JOBFIL%.*}_out"
@@ -199,6 +207,13 @@ EOF
 
 # echo "CAPTURED QSUB COMMAND: "
 # cat ${JOBFIL}
- qsub -q "${QUEUE}" ${JOBFIL} 
+if (( SUBMIT ))
+then
+ echo "Submitting job... "
+ qsub -q "${QUEUE}" ${JOBFIL}
+else
+ echo "Cowardly refusing to submit job."
+fi
+ 
  cd -
 done
