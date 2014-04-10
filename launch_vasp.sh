@@ -53,11 +53,13 @@ case "${HOST}" in
 	eslogin* )
 		echo "Hello Archer! <(_ _)>"
         CPUSPERHOST=24 #2x12 core per host on Archer
-		if (( "${USER}"="jarvist" ))
+		if (( "${USER}"=="jarvist" ))
 		then
-			ACCOUNT=e05-gener-wal 
+			ACCOUNT=e05-gener-wal
+            echo "Hello jarvist... Account: ${ACCOUNT}"
 		else
 			ACCOUNT=pr1u1109 
+            echo "Hello Ultrafox... Account: ${ACCOUNT}"
 		fi ;;
 	*)
 		echo "I don't think we've met ${HOST}. Might be problems! (>_<)>"
