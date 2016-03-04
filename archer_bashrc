@@ -38,6 +38,8 @@ alias cm='qstat -u "${USER}" | awk "BEGIN{eat=0;want=0;}{if(\$10~\"R\"){eat=eat+
 
 alias stalk='qstat -u keeeto && qstat -u pr1ukeet && qstat -u aron && qstat -u lora' #Stalkity stalk stalk
 
+alias jobs='qstat -u "${USER}" ' 
+
 #Two-line command prompt with host, user & PWD. Titlebar not used anymore?
 PS1="${TITLEBAR}${bold}[\t]\u@[ARCHER]\h:\w/ \n> ${normal}"
 

@@ -117,6 +117,42 @@ done
 #Next line important! Auto calculation of NCPUS...
 NCPUS=$(($HOSTS*$CPUSPERHOST))
 
+# Choose random funny name for the submission script
+NAME=` shuf -n1  << EOF
+MostlyZeros
+NaN-eater
+IAintConverging
+ConvergenceIsOverrated
+Disconvergent
+DiracFailedMe
+FeynmanFailedMe
+WhatDoesThisButtonDo
+Empiricist
+MistakeNot
+JustTesting
+IThoughtHeWasWithYou
+HelplessInTheFaceOfYourBeauty
+HappyIdiot
+Nameless
+SacrificialVictim
+WorkedLastTime
+Perfidy
+ProblemChild
+GermaneRiposte
+InOneEar
+InappropriateResponse
+KissThisThen
+EightRoundsRapid
+LightlySearedOnTheRealityGrill
+NowWeTryItMyWay
+TotalInternalReflection
+AFineDisregardForAwkwardFacts
+TeethingProblems
+SmileTolerantly
+YouCallThisClean
+EOF
+`
+
 #OK, now we should have our options
 cat <<EOF
 Well, here's what I understood / defaulted to:
@@ -128,6 +164,7 @@ Well, here's what I understood / defaulted to:
     RESTART =  ${RESTART}
     BUNDLE  =  ${BUNDLE}
     ACCOUNT =  ${ACCOUNT}
+    NAME    =  ${NAME}
 EOF
 
 
@@ -151,13 +188,14 @@ do
 #!/bin/bash --login
 #PBS -l walltime=${TIME}
 #PBS -l select=${HOSTS}
+#PBS -l N=${NAME}
 # Not really necessary on Archer...:ncpus=${NCPUS}:mem=${MEM}
 #PBS -A ${ACCOUNT}
 
 export OMP_NUM_THREADS=1
 ulimit -s unlimited
 
-module load vasp5/5.3.3
+module load vasp5
 
 export PBS_O_WORKDIR=\$(readlink -f \$PBS_O_WORKDIR)
 
