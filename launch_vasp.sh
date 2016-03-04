@@ -117,15 +117,29 @@ done
 #Next line important! Auto calculation of NCPUS...
 NCPUS=$(($HOSTS*$CPUSPERHOST))
 
-# Choose random funny name for the submission script
+# Choose random fun name for the submission script
+# First ~Dozen are by me; the rest are taken from Iain M Bank's Culture Ship names:
+# https://en.wikipedia.org/wiki/List_of_spacecraft_in_the_Culture_series
 NAME=` shuf -n1  << EOF
+TimeWaster
 MostlyZeros
 NaN-eater
+kAu-eater
+kAu-waster
 IAintConverging
+IAintMisbehaving
 ConvergenceIsOverrated
 Disconvergent
 DiracFailedMe
 FeynmanFailedMe
+Dis-solver
+99RedBalloons
+Nameless
+HackTheDyson
+GreetingsProfessorFalken
+ShallWePlayAGame
+OnlyWinningMove
+HowAboutANiceGameOfChess
 WhatDoesThisButtonDo
 Empiricist
 MistakeNot
@@ -133,7 +147,6 @@ JustTesting
 IThoughtHeWasWithYou
 HelplessInTheFaceOfYourBeauty
 HappyIdiot
-Nameless
 SacrificialVictim
 WorkedLastTime
 Perfidy
