@@ -120,6 +120,8 @@ NCPUS=$(($HOSTS*$CPUSPERHOST))
 # Choose random fun name for the submission script
 # First ~Dozen are by me; the rest are taken from Iain M Bank's Culture Ship names:
 # https://en.wikipedia.org/wiki/List_of_spacecraft_in_the_Culture_series
+
+# Maximum of 15 characters?
 NAME=` shuf -n1  << EOF
 TimeWaster
 MostlyZeros
@@ -127,8 +129,7 @@ NaN-eater
 kAu-eater
 kAu-waster
 IAintConverging
-IAintMisbehaving
-ConvergenceIsOverrated
+IAintMisbehavin
 Disconvergent
 DiracFailedMe
 FeynmanFailedMe
@@ -136,33 +137,39 @@ Dis-solver
 99RedBalloons
 Nameless
 HackTheDyson
-GreetingsProfessorFalken
-ShallWePlayAGame
+ProfessorFalken
+ShalWePlayAGame
 OnlyWinningMove
-HowAboutANiceGameOfChess
-WhatDoesThisButtonDo
+NiceGameOfChess
+WhatDoesThisBut
 Empiricist
 MistakeNot
 JustTesting
-IThoughtHeWasWithYou
-HelplessInTheFaceOfYourBeauty
+IThoughtHeWasWi
+Helpless
 HappyIdiot
-SacrificialVictim
+SacrificialVict
 WorkedLastTime
 Perfidy
 ProblemChild
+RecentConvert
+HonestMistake
+SteelyGlint
+NoFixedAbode
+ZeroGravitas
+NotInventedHear
+NaughtyMonsters
 GermaneRiposte
 InOneEar
-InappropriateResponse
+InappropRespons
 KissThisThen
-EightRoundsRapid
-LightlySearedOnTheRealityGrill
+LightlySeared
 NowWeTryItMyWay
-TotalInternalReflection
-AFineDisregardForAwkwardFacts
-TeethingProblems
+TotalIntReflect
+AFineDisregard
+TeethingProblem
 SmileTolerantly
-YouCallThisClean
+uCallThisClean
 EOF
 `
 
@@ -201,7 +208,7 @@ do
 #!/bin/bash --login
 #PBS -l walltime=${TIME}
 #PBS -l select=${HOSTS}
-#PBS -l N=${NAME}
+#PBS -N ${NAME}
 # Not really necessary on Archer...:ncpus=${NCPUS}:mem=${MEM}
 #PBS -A ${ACCOUNT}
 
@@ -233,19 +240,17 @@ fi
 # Local copies as currently I'm stupidly added to group=vasp rather than required group=vasp5!
 if (( GAMMA ))
 then
- VASP=~/bin/vasp5.gamma
+ VASP=~/bin/vasp_gam
 else
- VASP=~/bin/vasp5
+ VASP=~/bin/vasp
 fi
 
 #OK, RUN AND CLEANUP TIME
 
 cat  >> ${JOBFIL} << EOF
 
-
 # THUNDERBIRDS ARE GO!
 
-# Temporarily Aron's compilation; until Archer sort out permissions for module.
 aprun -n '$NCPUS' $VASP > vasp.out
 
 #VASP vomits files everywhere, so lets bundle them up into a folder
