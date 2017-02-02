@@ -40,8 +40,16 @@ alias stalk='qstat -u keeeto && qstat -u pr1ukeet && qstat -u aron && qstat -u l
 
 alias jobs='qstat -u "${USER}" ' 
 
-#Two-line command prompt with host, user & PWD. Titlebar not used anymore?
-PS1="${TITLEBAR}${bold}[\t]\u@[ARCHER]\h:\w/ \n> ${normal}"
+# PROMPT
+bold=`tput bold`
+normal=`tput sgr0`
+
+# Compact Two line Prompt with
+# [WeekdayDateMonth-Hour:Minute]user@host:~/directory/
+# Looks Like:
+# [Tue24May-12:55]jarvist@chmc-7602:~/
+# >
+PS1="\[${TITLEBAR}${bold}\][\D{%a%d%b-%R}]\u@\h:\w/ \n> \[${normal}\]"
 
 if [ "${USER}" == "pr1ujarv" ]; then
 cat << EOF
