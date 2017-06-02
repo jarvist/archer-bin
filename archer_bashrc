@@ -60,7 +60,18 @@ cat << EOF
 EOF
 fi
 
+if [ "${USER}" == "pr1ujarl" ]; then
+cat << EOF
+ _____ ____  ___ ____   ____
+|  ___|  _ \|_ _/ ___| / ___|
+| |_  | |_) || |\___ \| |
+|  _| |  _ < | | ___) | |___
+|_|   |_| \_\___|____/ \____|
+Feeling Risky?
+
+EOF
+fi
 echo
-echo "  GREETINGS PROFESSOR FALKEN.  SHALL WE PLAY A GAME?"
+echo "${bold}  GREETINGS PROFESSOR FALKEN.  SHALL WE PLAY A GAME? ${normal}"
 echo
 
