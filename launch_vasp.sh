@@ -53,13 +53,13 @@ case "${HOST}" in
 	eslogin* )
 		echo "Hello Archer! <(_ _)>"
         CPUSPERHOST=24 #2x12 core per host on Archer
-		if (( "${USER}"=="jarvist" ))
+		if (( "${USER}" = "jarvist" ))
 		then
 			ACCOUNT=e05-gener-wal
             echo "Hello jarvist... Account: ${ACCOUNT}"
 		else
-			ACCOUNT=pr1u1109 
-            echo "Hello Ultrafox... Account: ${ACCOUNT}"
+			ACCOUNT=pr1u1304
+            echo "Hello RISKY... Account: ${ACCOUNT}"
 		fi ;;
 	*)
 		echo "I don't think we've met ${HOST}. Might be problems! (>_<)>"
@@ -121,7 +121,9 @@ NCPUS=$(($HOSTS*$CPUSPERHOST))
 # First ~Dozen are by me; the rest are taken from Iain M Bank's Culture Ship names:
 # https://en.wikipedia.org/wiki/List_of_spacecraft_in_the_Culture_series
 
-# Maximum of 15 characters?
+# Limit of 15 characters?
+# Only 10 characters show in the standard qstat
+#       L     E
 NAME=` shuf -n1  << EOF
 TimeWaster
 MostlyZeros
@@ -237,13 +239,19 @@ then
  done 
 fi
 
+VASP=~/bin/vasp_std
 # Local copies as currently I'm stupidly added to group=vasp rather than required group=vasp5!
 if (( GAMMA ))
 then
  VASP=~/bin/vasp_gam
-else
- VASP=~/bin/vasp
 fi
+
+if (( NCL ))
+then
+ VASP=~/bin/vasp_ncl
+fi
+
+echo "VASP BINARY: ${VASP}"
 
 #OK, RUN AND CLEANUP TIME
 
