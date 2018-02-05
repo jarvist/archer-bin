@@ -53,13 +53,13 @@ case "${HOST}" in
 	eslogin* )
 		echo "Hello Archer! <(_ _)>"
         CPUSPERHOST=24 #2x12 core per host on Archer
-		if (( "${USER}" = "jarvist" ))
+		if (( "${USER}" == "jarvist" ))
 		then
 			ACCOUNT=e05-gener-wal
-            echo "Hello jarvist... Account: ${ACCOUNT}"
+            echo "Hello jarvist... Account code: ${ACCOUNT}"
 		else
 			ACCOUNT=pr1u1304
-            echo "Hello RISKY... Account: ${ACCOUNT}"
+            echo "Hello RISKY... Account code: ${ACCOUNT}"
 		fi ;;
 	*)
 		echo "I don't think we've met ${HOST}. Might be problems! (>_<)>"
@@ -77,11 +77,11 @@ OPTIONS:
 	-m amount of memory (Not presently used...)
 
 	-q queue
-        -a account
+    -a account
 	-t time
-        -h hosts
+    -h hosts
 	-s submit
-        -c cpusperhost (Nb: overwrite with lower value to underutilise CPUs + enjoy higher MEM/cpu.)
+    -c cpusperhost (Nb: overwrite with lower value to underutilise CPUs + enjoy higher MEM/cpu.)
 
 DEFAULTS (+ inspect for formatting):
 	NCPUS = ${NCPUS}
@@ -105,7 +105,7 @@ do
 #FLAGS
         s    )  SUBMIT=1;; 
         r    )  RESTART="YEAH";;
-	g    )  GAMMA=1;;
+	    g    )  GAMMA=1;;
         ?    )  USAGE
                 exit 0;;
         *    )  echo ""
