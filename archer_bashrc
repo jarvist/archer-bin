@@ -5,9 +5,6 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-# User specific aliases and functions
-#module load gcc
-
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
@@ -17,7 +14,6 @@ if [ -d ~/bin ] ; then
 fi
 export PATH
 
-# set PATH so it includes user's private bin if it exists
 if [ -d ~/archer-bin ] ; then
  PATH=~/archer-bin:"${PATH}"
 fi
@@ -25,26 +21,19 @@ export PATH
 
 
 #Kick vim to give full colour, please
-export TERM=xterm-256color
+# export TERM=xterm-256color
+
+# Disable software flow control - via Twitter @thingskatedid
+# (ctrl-S/ctrl-Q)
+stty -ixon 
 
 #Alias the Jester
-# From Aron...
-alias q='qstat -u ${USER}'
-alias qa='qstat -a'
-alias wq='watch qstat -u ${USER}'
-alias s='showq'
-alias d='diagnose -f'
-alias v='vim'
 # VASP mussers
 alias t='tail OUTCAR'
 alias to='tail OSZICAR'
 alias pressure='grep pressure OUTCAR'
 
 # Everyone loves the cookie monster...
-alias cm='qstat -u "${USER}" | awk "BEGIN{eat=0;want=0;}{if(\$10~\"R\"){eat=eat+\$7}else{want=want+\$7}}END{print \"Me eat \",eat,\" cookies! Me want \",want,\" cookies!\"}" '
-
-alias stalk='qstat -u keeeto && qstat -u pr1ukeet && qstat -u aron && qstat -u lora' #Stalkity stalk stalk
-
 alias jobs='qstat -u "${USER}" ' 
 
 # PROMPT
@@ -58,26 +47,6 @@ normal=`tput sgr0`
 # >
 PS1="\[${TITLEBAR}${bold}\][\D{%a%d%b-%R}]\u@\h:\w/ \n> \[${normal}\]"
 
-if [ "${USER}" == "pr1ujarv" ]; then
-cat << EOF
-    |\__/|  
-   /     \  
-  /_.~ ~,_\    Ultra, Ultra, UltraFox!
-     \@/
-EOF
-fi
-
-if [ "${USER}" == "pr1ujarl" ]; then
-cat << EOF
- _____ ____  ___ ____   ____
-|  ___|  _ \|_ _/ ___| / ___|
-| |_  | |_) || |\___ \| |
-|  _| |  _ < | | ___) | |___
-|_|   |_| \_\___|____/ \____|
-Feeling Risky?
-
-EOF
-fi
 echo
 echo "${bold}  GREETINGS PROFESSOR FALKEN.  SHALL WE PLAY A GAME? ${normal}"
 echo
