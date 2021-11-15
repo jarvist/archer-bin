@@ -19,13 +19,16 @@ if [ -d ~/archer-bin ] ; then
 fi
 export PATH
 
-
 # recommended for ARCHER2 Python; https://docs.archer2.ac.uk/user-guide/python/
 export PYTHONUSERBASE=/home/e05/e05/jarvist/work/pip-local
 export PATH=$PYTHONUSERBASE/bin:$PATH
 
 #Kick vim to give full colour, please
 # export TERM=xterm-256color
+
+# https://news.ycombinator.com/item?id=19762190
+# The tl;dr here is that "ls" can be much faster if you disable colorizing files based on the their file capabilities, setuid/setgid bits, or executable flag.
+LS_COLORS='ex=00:su=00:sg=00:ca=00:'
 
 # Disable software flow control - via Twitter @thingskatedid
 # (ctrl-S/ctrl-Q)
