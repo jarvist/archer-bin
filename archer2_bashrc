@@ -45,6 +45,12 @@ alias budgets='sacctmgr -p list assoc where user=$USER format=user,cluster,accou
 alias qstat='squeue -u $USER '
 alias jobreport='sacct -u $USER --format=JobID,JobName,MaxRSS,Elapsed'
 
+# from https://bioinformaticsworkbook.org/Appendix/HPC/SLURM/slurm-cheatsheat.html
+alias si="sinfo -o \"%20P %5D %14F %8z %10m %10d %11l %16f %N\""
+alias sq="squeue -o \"%8i %12j %4t %10u %20q %20a %10g %20P %10Q %5D %11l %11L %R\""
+
+
+
 # PROMPT
 bold=`tput bold`
 normal=`tput sgr0`
