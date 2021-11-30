@@ -40,13 +40,13 @@ alias t='tail OUTCAR'
 alias to='tail OSZICAR'
 alias pressure='grep pressure OUTCAR'
 
-# Everyone loves the cookie monster...
-alias jobs='qstat -u "${USER}" ' 
 
 # ARCHER2 specific Slurm stuff
 alias budgets='sacctmgr -p list assoc where user=$USER format=user,cluster,account,maxtresmins  '
-alias qstat='squeue -u $USER '
+alias qstat='squeue -u $USER -l '
 alias jobreport='sacct -u $USER --format=JobID,JobName,MaxRSS,Elapsed'
+alias QoS='sacctmgr show assoc user=$USER cluster=archer2 format=cluster,account,user,qos%50'
+# see https://docs.archer2.ac.uk/user-guide/scheduler/#quality-of-service-qos
 
 # from https://bioinformaticsworkbook.org/Appendix/HPC/SLURM/slurm-cheatsheat.html
 alias si="sinfo -o \"%20P %5D %14F %8z %10m %10d %11l %16f %N\""
