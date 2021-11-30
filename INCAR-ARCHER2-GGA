@@ -1,0 +1,34 @@
+SYSTEM = PerovskiteArtem
+
+!Start Parameters:
+ ISTART = 1        (Read existing wavefunction) 
+ INIWAV = 1        (Random initial wavefunction)
+
+!Parallel Options: 
+ LPLANE = .TRUE.   (Real space distribution)
+
+! Briefly tested for scaling on a small MAPI GGA job
+ NCORE  = 64       'set to number of cores per compute node' 
+ KPAR   = 16       'set to integer divisor of the total number of cores'
+
+!Electronic Relaxation:
+! PREC  = Normal  (Precision level)
+ LREAL = Auto    (Projection operators: automatic)
+ ENMAX = 700 eV    (Plane-wave cutoff) 
+ NELM  = 40        (Max number of SCF steps)   
+ EDIFF = 1E-07     (SCF convergence) 
+ GGA   =  PS       (PBE exchange-correlation)
+
+!Ionic Relaxation:
+ EDIFFG =  -0.001    (Ionic convergence)
+ ISMEAR =      0     (Gaussian smearing, Metals:1, MP)
+
+ SIGMA  =      0.001  (Smearing in eV, Metals:0.2)
+
+
+ISIF=2
+IBRION=2
+POTIM=0.1 # don't blow up with organics...
+
+ALGO   = Fast # recommended for MD (fall back ALGO = Fast)     
+
