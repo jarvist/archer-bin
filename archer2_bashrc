@@ -20,7 +20,7 @@ fi
 export PATH
 
 # recommended for ARCHER2 Python; https://docs.archer2.ac.uk/user-guide/python/
-export PYTHONUSERBASE=/home/e05/e05/jarvist/work/pip-local
+export PYTHONUSERBASE=/work/e05/e05/jarvist/pip-local
 export PATH=$PYTHONUSERBASE/bin:$PATH
 
 #Kick vim to give full colour, please
@@ -52,7 +52,27 @@ alias QoS='sacctmgr show assoc user=$USER cluster=archer2 format=cluster,account
 alias si="sinfo -o \"%20P %5D %14F %8z %10m %10d %11l %16f %N\""
 alias sq="squeue -o \"%8i %12j %4t %10u %20q %20a %10g %20P %10Q %5D %11l %11L %R\""
 
+# https://stackoverflow.com/a/53039474
+# on ARCHER2, 7 is number of nodes
+function queuesummary() {
+    squeue "$@" | awk '
+    BEGIN {
+        abbrev["R"]="(Running)"
+        abbrev["PD"]="(Pending)"
+        abbrev["CG"]="(Completing)"
+        abbrev["F"]="(Failed)"
+    }
+    NR>1 {a[$5]++; nodes[$5]+=$7}
+    END {
+        for (i in a) {
+            printf "%-2s %-12s Jobs: %d Nodes: %d\n", i, abbrev[i], a[i], nodes[i]
+        }
+    }'
+}
 
+# From Sean
+export SLURM_TIME_FORMAT='relative'
+alias jobhist='sacct -X -S $(date -d "1 month ago" +%D-%R) --format=JobID,Jobname%20,partition,state,elapsed%15,time,start%22,end%22,nnodes,ncpus | egrep -v "(RUNNING|PENDING)" | egrep --color "(Ystday ..:..|               ..:..:..)|$"'
 
 # PROMPT
 bold=`tput bold`
