@@ -40,7 +40,6 @@ alias t='tail OUTCAR'
 alias to='tail OSZICAR'
 alias pressure='grep pressure OUTCAR'
 
-
 # ARCHER2 specific Slurm stuff
 alias budgets='sacctmgr -p list assoc where user=$USER format=user,cluster,account,maxtresmins  '
 alias qstat='squeue -u $USER -l '
@@ -73,6 +72,15 @@ function queuesummary() {
 # From Sean
 export SLURM_TIME_FORMAT='relative'
 alias jobhist='sacct -X -S $(date -d "1 month ago" +%D-%R) --format=JobID,Jobname%20,partition,state,elapsed%15,time,start%22,end%22,nnodes,ncpus | egrep -v "(RUNNING|PENDING)" | egrep --color "(Ystday ..:..|               ..:..:..)|$"'
+
+# Interactive jobs
+# https://docs.archer2.ac.uk/user-guide/scheduler/#using-salloc-to-reserve-resources
+alias hitme='echo "20 minute interactive job" && salloc --nodes=1 --tasks-per-node=128 --cpus-per-task=1 \
+                --time=00:20:00 --partition=standard --qos=short \
+                --account=e05-bulk-fro '
+alias rhythmstick='echo "8 hour interactive job" && salloc --nodes=1 --tasks-per-node=128 --cpus-per-task=1 \
+                 --time=08:00:00 --partition=standard  \
+                 --account=e05-bulk-fro '
 
 # PROMPT
 bold=`tput bold`
