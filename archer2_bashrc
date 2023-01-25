@@ -79,7 +79,7 @@ alias hitme='echo "20 minute interactive job" && salloc --nodes=1 --tasks-per-no
                 --time=00:20:00 --partition=standard --qos=short \
                 --account=e05-bulk-fro '
 alias rhythmstick='echo "8 hour interactive job" && salloc --nodes=1 --tasks-per-node=128 --cpus-per-task=1 \
-                 --time=08:00:00 --partition=standard  \
+                 --time=08:00:00 --partition=standard  --qos=standard \
                  --account=e05-bulk-fro '
 
 # PROMPT
