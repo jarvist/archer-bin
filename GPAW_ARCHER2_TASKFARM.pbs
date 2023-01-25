@@ -1,0 +1,63 @@
+#!/bin/sh -ux 
+
+#SBATCH --job-name=Disconvergent
+#SBATCH --nodes=4
+#SBATCH --tasks-per-node=128
+#SBATCH --cpus-per-task=1
+
+#SBATCH --time=23:58:00
+#SBATCH --qos=standard
+
+#    #SBATCH --time=00:20:00
+#    #SBATCH --qos=short
+
+# Replace [budget code] below with your project code (e.g. t01)
+#SBATCH --account=e05-bulk-fro
+#SBATCH --partition=standard
+
+module load cray-python # should bring in pip + accelerated libs
+
+# Below install roughly following https://github.com/hpc-uk/build-instructions/tree/main/apps/GPAW/ARCHER2_gpaw21.1.0_python3_gcc10 
+# & then ASE via pip --local, within the cray-python env
+
+export GPAW_DIR=/work/e05/e05/jarvist/bin/gpaw
+export LIBXC_DIR=/work/e05/e05/jarvist/lib
+export GPAW_SETUP_PATH=/work/e05/e05/jarvist/bin/gpaw/datasets/gpaw-setups-0.9.20000
+
+export PATH=$PATH:$GPAW_DIR/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GPAW_DIR/lib
+export PYTHONPATH=$PYTHONPATH:$GPAW_DIR/lib/python3.8/site-packages:/work/e05/e05/jarvist/pip-local/lib/python3.8/site-packages/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBXC_DIR/libxc/lib
+
+export OMP_NUM_THREADS=1
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/work/e05/e05/jarvist/openmpi/lib
+export PATH=$PATH:/work/e05/e05/jarvist/openmpi/bin
+
+# ntasks=128 --> use the whole node (therefore you have the whole memory)
+# -n = 32    --> how many processes gpaw-python will try and spin up
+# Maybe we should turn off nomultithread ?
+SRUN="srun --nodes=1 --ntasks=32 --ntasks-per-node=32 \
+    --exact --mem=50000M \
+    --hint=nomultithread --distribution=block:block -n 32 "
+
+# Get a list of the nodes assigned to this job in a format we can use.
+#   scontrol converts the condensed node IDs in the sbatch environment
+#   variable into a list of full node IDs that we can use with srun to
+#   ensure the subjobs are placed on the correct node. e.g. this converts
+#   "nid[001234,002345]" to "nid001234 nid002345"
+nodelist=$(scontrol show hostnames $SLURM_JOB_NODELIST)
+
+for nodeid in $nodelist
+do
+    for i in 1 2 3 4
+    do
+        echo "Taskfarm job: Node ${nodelist} Job ${i} starting..."
+        $SRUN --nodelist=${nodeid} gpaw-python elph.py  > elph_${nodeid}_${i}.stdout 2>&1 &
+    done
+done
+
+wait
+
+echo "For us, there is only the trying. The rest is not our business. ~T.S.Eliot"
+

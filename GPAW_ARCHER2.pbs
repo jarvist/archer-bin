@@ -1,0 +1,41 @@
+#!/bin/sh -ux 
+
+#SBATCH --job-name=Disconvergent
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=128
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00:20:00
+
+# Replace [budget code] below with your project code (e.g. t01)
+#SBATCH --account=e05-bulk-fro
+#SBATCH --partition=standard
+#SBATCH --qos=short
+
+module load cray-python # should bring in pip + accelerated libs
+
+# Below install roughly following https://github.com/hpc-uk/build-instructions/tree/main/apps/GPAW/ARCHER2_gpaw21.1.0_python3_gcc10 
+# & then ASE via pip --local, within the cray-python env
+
+export GPAW_DIR=/work/e05/e05/jarvist/bin/gpaw
+export LIBXC_DIR=/work/e05/e05/jarvist/lib
+export GPAW_SETUP_PATH=/work/e05/e05/jarvist/bin/gpaw/datasets/gpaw-setups-0.9.20000
+
+export PATH=$PATH:$GPAW_DIR/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GPAW_DIR/lib
+export PYTHONPATH=$PYTHONPATH:$GPAW_DIR/lib/python3.8/site-packages:/work/e05/e05/jarvist/pip-local/lib/python3.8/site-packages/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBXC_DIR/libxc/lib
+
+export OMP_NUM_THREADS=1
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/work/e05/e05/jarvist/openmpi/lib
+export PATH=$PATH:/work/e05/e05/jarvist/openmpi/bin
+
+# ntasks=128 --> use the whole node (therefore you have the whole memory)
+# -n = 32    --> how many processes gpaw-python will try and spin up
+# Maybe we should turn off nomultithread ?
+SRUN="srun --ntasks=128 --hint=nomultithread --distribution=block:block -n 32 "
+
+$SRUN gpaw-python elph.py  > elph.stdout 2>&1
+
+echo "For us, there is only the trying. The rest is not our business. ~T.S.Eliot"
+
