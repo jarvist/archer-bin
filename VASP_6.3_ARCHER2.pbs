@@ -6,10 +6,13 @@
 #SBATCH --error=vasp.stderr
 
 #SBATCH --partition=standard
-#SBATCH --account=e05-bulk-fro
-#SBATCH --qos=standard
 
-#SBATCH --nodes=2
+## Default to low-priority with 'single coin' e05 account.
+## Everyone should have access to this.
+#SBATCH --account=e05-low
+#SBATCH --qos=lowpriority
+
+#SBATCH --nodes=4
 #SBATCH --ntasks-per-node=128
 #SBATCH --cpus-per-task=1
 
@@ -25,6 +28,9 @@ start=`date +%s`
 export OMP_NUM_THREADS=1
 
 module load PrgEnv-cray
+# Use UCX Networking ; required for scaling beyond 8 nodes efficiently.
+module swap craype-network-ofi craype-network-ucx 
+module swap cray-mpich cray-mpich-ucx 
 
 # Nb: worker nodes can't see $HOME
 VASPBIN="/work/e05/e05/jarvist/bin/ARCHER2-VASP/vasp6.3.0-Feb2022/vasp.6.3.0/bin/vasp_std"
